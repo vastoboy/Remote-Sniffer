@@ -1,8 +1,11 @@
 import socket
 import struct
 
+ 
 
 class Protocols:
+
+	
 	# Returns MAC as string from bytes (ie AA:BB:CC:DD:EE:FF)
 	def get_mac_addr(self, mac_raw):
 	    byte_str = map('{:02x}'.format, mac_raw)
@@ -71,7 +74,6 @@ class Protocols:
 		packet_type, code, checksum = struct.unpack('! B B H', raw_data[:4])
 		data = raw_data[4:]
 		return packet_type, code, checksum, data
-
 
 
 
