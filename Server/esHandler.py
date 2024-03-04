@@ -30,6 +30,17 @@ class EsHandler:
 
 
 
+        #deletes all documents in specified index
+        def delete_all_docs(self):
+            try:
+                self.es.delete_by_query(index=self.index_name, body={"query": {"match_all": {}}})
+                print("[+]Documents deleted sucessfully!!!")
+            except Exception as e:
+                print(e)
+                print("[+]Unable delete documents")
+
+
+
         #deletes document from index
         def delete_document(self, client_id):
             try:
@@ -42,7 +53,7 @@ class EsHandler:
 
         #tabulate es date using prettytable
         def tabulate_index_data(self, resp):
-            for hit in resp['hits']['hits']:
+            for hit in resp:
                 self.pt.field_names = ["Client-ID", "IP-Address", "System", "Node", "Release", "Version", "Machine", "Date-Joined", "Time-Joined"]
                 self.pt.add_row([
                              hit["_id"],
@@ -61,12 +72,49 @@ class EsHandler:
 
 
 
-        #retrieve client information documents from elastic search
         def retrieve_client_information(self):
-            try:
-                resp = self.es.search(index=self.index_name, size=100, query={"match_all": {}})
-                self.tabulate_index_data(resp)
-            except Exception as e:
-                print(e)
+            query = {
+                "query": {
+                    "bool": {
+                        "must": [
+                            {"exists": {"field": "ip"}},
+                            {"exists": {"field": "system"}},
+                            {"exists": {"field": "node"}},
+                            {"exists": {"field": "release"}},
+                            {"exists": {"field": "version"}},
+                            {"exists": {"field": "machine"}},
+                            {"exists": {"field": "date_today"}},
+                            {"exists": {"field": "time_now"}}
+                        ]
+                    }
+                }
+            }
 
+            try:
+                response = self.es.search(index=self.index_name, body=query, size=10)
+                hits = response['hits']['hits']
+                if hits:
+                    self.tabulate_index_data(hits)
+                else:
+                    print("No documents found with the specified fields.")
+            except Exception as e:
+                print(f"An error occurred: {e}")
+
+
+
+
+        def index_capture(self, capture):
+            try:
+                response = self.es.count(index=self.index_name)
+                num_documents = response['count']
+                print(f"Doc ID: {num_documents}")
+                document_id = num_documents + 1 
+                self.es.index(index=self.index_name, id=document_id, body=capture)
+
+                print(f"Capture data saved to Elasticsearch with document ID: {document_id}")
+                self.es.indices.refresh(index=self.index_name)
+
+
+            except Exception as e:
+                print(f"Error occurred while saving capture to Elasticsearch: {e}")
 

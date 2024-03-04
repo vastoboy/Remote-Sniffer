@@ -57,15 +57,14 @@ class SimpleSnifferClient:
 
 
     def send_packet_data(self):
-        ss = SimpleSniffer("ss")
-        #ss.main()
+        sniffer = SimpleSniffer()
 
         # Start the packet capture in a separate thread.
-        capture_thread = threading.Thread(target=ss.main)
+        capture_thread = threading.Thread(target=sniffer.main)
         capture_thread.start()
 
         # Start the file reading in a separate thread.
-        read_thread = threading.Thread(target=ss.process_captures)
+        read_thread = threading.Thread(target=sniffer.process_captures, args=(self.sock,))
         read_thread.start()
 
 
@@ -75,14 +74,14 @@ class SimpleSnifferClient:
 
 
     def start(self):
-        #self.establish_connection()
-        #self.send_system_info()
+        self.establish_connection()
+        self.send_system_info()
         self.send_packet_data()
 
 
 
 
-sniffer = SimpleSnifferClient("192.168.1.182", 5005)
+sniffer = SimpleSnifferClient("192.168.1.182", 5001)
 sniffer.start()
 
 
