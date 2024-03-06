@@ -4,8 +4,8 @@ import queue
 import socket
 import textwrap
 import threading
-from protocols import Protocols
 from datetime import datetime
+from protocols import Protocols
 
 
 
@@ -30,9 +30,9 @@ class SimpleSniffer:
     def process_captures(self, sock):
             while True:
                 try:
-                    if self.capture_queue.qsize() >= 20: 
+                    if self.capture_queue.qsize() >= 100: 
                         captures = []  # Temporary list to store captures for processing
-                        for _ in range(20):
+                        for _ in range(100):
                             if not self.capture_queue.empty():
                                 capture = self.capture_queue.get()  # Get a capture from the queue
                                 print(capture)
@@ -40,7 +40,7 @@ class SimpleSniffer:
                         
                         captures_json = json.dumps(captures)
                         captures_bytes = captures_json.encode()
-                        #print(captures_bytes)
+                        
                         sock.sendall(captures_bytes)
                         self.capture_queue.task_done() # Ensure items are removed from the queue after processing
 
@@ -78,7 +78,7 @@ class SimpleSniffer:
                            "IPV4 Proto": ipv4_proto, 
                            "IPV4 Source": ipv4_src, 
                            "IPV4 Target": ipv4_target, 
-                           "IPV4 Data": ipv4_data.hex()
+                           "IPV4 Data": str(ipv4_data)
                            })
 
 
@@ -89,7 +89,7 @@ class SimpleSniffer:
                                 "Icmp Packet Type": icmp_packet_type, 
                                 "Icmp Code": icmp_code, 
                                 "Icmp Checksum": icmp_checksum, 
-                                "Icmp Data": icmp_data.hex()
+                                "Icmp Data": str(icmp_data)
                                 })
 
 
@@ -117,11 +117,11 @@ class SimpleSniffer:
                         if tcp_src_port == 80 or tcp_dest_port == 80:
                             try:
                                 http_data = self.protocols.http(tcp_data)
-                                capture.update({"HTTP Data": http_data.hex()})
+                                capture.update({"HTTP Data": str(http_data)})
                             except:
                                 continue
                         else:
-                            capture.update({"TCP Data": tcp_data.hex()})
+                            capture.update({"TCP Data": str(tcp_data)})
 
 
 
@@ -132,18 +132,16 @@ class SimpleSniffer:
                                 "UDP Source Port": udp_src_port, 
                                 "UDP Destination Port": udp_dest_port, 
                                 "UDP Size": udp_size, 
-                                "UDP Data": udp_data.hex()
+                                "UDP Data": str(udp_data)
                                 })
-
-
 
                 # Other IPv4
                 else:
-                    capture.update({"Other IPV4 Data": ipv4_data.hex()})
+                    capture.update({"Other IPV4 Data": str(ipv4_data)})
 
 
             else:
-                capture.update({"Ethernet Data": eth_data.hex()})
+                capture.update({"Ethernet Data": str(eth_data)})
 
 
             self.capture_queue.put(capture)

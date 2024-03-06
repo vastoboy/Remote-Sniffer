@@ -23,7 +23,7 @@ class EsHandler:
                     print("[+] Document Updated!!!")
                 else:
                     resp = self.es.index(index=self.index_name, id=document_id, body=client_info)
-                    print("information stored sucesfully")
+                    print("information stored sucessfully")
             except Exception as e:
                 print("[+]Unable to store data!!!")
                 print(e)
@@ -117,4 +117,5 @@ class EsHandler:
 
             except Exception as e:
                 print(f"Error occurred while saving capture to Elasticsearch: {e}")
+
 

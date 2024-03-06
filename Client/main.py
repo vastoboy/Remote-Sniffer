@@ -11,6 +11,7 @@ import threading
 from sniffer import SimpleSniffer
 
 
+
 class SimpleSnifferClient:
 
     def __init__(self, host, port):
@@ -81,7 +82,7 @@ class SimpleSnifferClient:
 
 
 
-sniffer = SimpleSnifferClient("192.168.1.182", 5001)
+sniffer = SimpleSnifferClient("192.168.1.202", 5001)
 sniffer.start()
 
 

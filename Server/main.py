@@ -91,35 +91,25 @@ class SimpleSnifferServer:
                         self.eshandler.delete_document(client_id)
 
 
-                   
-
+        
         def receive_captures(self, conn):
             while True:
                 try:
                     # Receive captures from client machine
                     capture_bytes = self.recvall(conn)
                     if capture_bytes:
-                        captures_json = capture_bytes.decode()
-                        captures = json.loads(captures_json, parse_int=str)
+                        # Split the received data into individual JSON objects if necessary
+                        captures_jsons = capture_bytes.decode()
+                        captures = json.loads(captures_jsons, parse_int=str)
                         for capture in captures:
-                            # Loop through all keys in capture
-                            for key in list(capture.keys()):
-                                if key.endswith("Data") and capture[key]:
-                                    # Decode hex data
-                                    hex_data = capture[key]
-                                    decoded_data = bytes.fromhex(hex_data).decode('utf-8', errors='ignore')  # errors='ignore' to avoid decoding issues
-                                    capture[key] = decoded_data
-
                             print(capture)
                             print("\n")
                             self.eshandler.index_capture(capture)
                     else:
-                        #print("No data received from client")
                         continue
                 except Exception as e:
                     print(f"Error occurred while receiving captures: {e}")
                     continue
-                    
 
 
 
@@ -164,7 +154,7 @@ print(art)
 
 
 
-sniffer = SimpleSnifferServer("192.168.1.182", 5001, "packet-sniffer", "http://localhost:9200")
+sniffer = SimpleSnifferServer("192.168.1.202", 5001, "sniffer", "http://localhost:9200")
 
 # Create two threads for the functions
 thread1 = threading.Thread(target=sniffer.start)
@@ -172,4 +162,8 @@ thread1.start()
 
 thread2 = threading.Thread(target=sniffer.shell_interface)
 thread2.start() # Start the threads
+
+
+
+
 
