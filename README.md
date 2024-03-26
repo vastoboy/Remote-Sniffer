@@ -1,8 +1,8 @@
+![Packet-Sniffer](https://user-images.githubusercontent.com/25181517/183423507-c056a6f9-1ba8-4312-a350-19bcbc5a8697.png)
+
 # Packet-Sniffer
 Remote Sniffer is a simple Python-based tool designed to remotely capture and analyze network packets. It allows users to monitor network traffic in real-time, capturing packets sent and received over a network interface.
 
-
-<i class="fa-brands fa-python"></i>
 
 ## Setup Elasticsearch
 * Before using Packet-Sniffer, ensure that you have Elasticsearch installed and configured. Elasticsearch is used for storing and indexing captured packet data. Follow these steps to set up Elasticsearch:
