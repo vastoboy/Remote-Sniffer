@@ -14,7 +14,7 @@ class EsHandler:
 
 
 
-        #store client info in elasticsearch index
+        # store client info in elasticsearch index
         def store_client_information(self, client_info, document_id=0):
             try:
 
@@ -41,7 +41,7 @@ class EsHandler:
 
 
 
-        #deletes all documents in specified index
+        # deletes all documents in specified index
         def delete_all_docs(self):
             try:
                 self.es.delete_by_query(index=self.index_name, body={"query": {"match_all": {}}})
@@ -52,7 +52,7 @@ class EsHandler:
 
 
 
-        #deletes document from index
+        # deletes document from index
         def delete_document(self, client_id):
             try:
                 self.es.delete(index=self.index_name, id=client_id)
@@ -62,7 +62,7 @@ class EsHandler:
 
 
 
-        #tabulate es date using prettytable
+        # tabulate es date using prettytable
         def tabulate_index_data(self, resp):
             for hit in resp:
                 self.pt.field_names = ["Client-ID", "IP-Address", "System", "Node", "Mac-Address", "Release", "Version", "Machine", "Date-Joined", "Time-Joined"]
@@ -84,7 +84,7 @@ class EsHandler:
 
 
 
-        #retrieves client infor from index
+        # retrieves client infor from index
         def retrieve_client_information(self):
             query = {
                 "query": {
@@ -116,16 +116,16 @@ class EsHandler:
 
 
 
-        #index caputure data 
+        # index caputure data 
         def index_capture(self, capture):
             try:
                 response = self.es.count(index=self.index_name)
                 num_documents = response['count']
-                #print(f"Doc ID: {num_documents}") 
+                # print(f"Doc ID: {num_documents}") 
                 document_id = num_documents + 1 
                 self.es.index(index=self.index_name, id=document_id, body=capture)
 
-                #print(f"[+]Capture data saved to Elasticsearch with document ID: {document_id}")
+                # print(f"[+]Capture data saved to Elasticsearch with document ID: {document_id}")
                 self.es.indices.refresh(index=self.index_name)
 
 

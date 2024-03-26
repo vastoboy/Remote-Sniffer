@@ -30,7 +30,7 @@ class RemoteSnifferServer:
 
 
 
-        #create socket and listen for client connections
+        # create socket and listen for client connections
         def create_socket(self):
             try:
                 self.sock1 = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -55,7 +55,7 @@ class RemoteSnifferServer:
                 try:
                     self.conn1, addr = self.sock1.accept()
                     self.conn1.setblocking(True)
-                    print(f"[+]Session 1 has started on port {self.port1}")
+                    print(f"\n[+]Session 1 has started on port {self.port1}")
                     
 
                     self.conn2, addr = self.sock2.accept()
@@ -63,8 +63,8 @@ class RemoteSnifferServer:
                     print(f"[+]Session 2 has started on port {self.port2}")
                    
 
-                    client_data = self.conn1.recv(1024).decode() #recieve response from client
-                    ip = re.findall("'(.*?)'", str(addr)) #format IP from addr
+                    client_data = self.conn1.recv(1024).decode() # receive response from client
+                    ip = re.findall("'(.*?)'", str(addr)) # format IP from addr
                     ip = {"ip": "".join(ip)}
                     
                     client_data = json.loads(client_data)
@@ -72,7 +72,7 @@ class RemoteSnifferServer:
                     client_data_dict.update(client_data)
                     is_client_indexed = self.eshandler.store_client_information(client_data_dict)
 
-                    #disconnect if client was not indexed sucessfuly
+                    # disconnect if client was not indexed sucessfuly
                     if not is_client_indexed:
                         self.conn1.close()
                         self.conn2.close()
@@ -82,7 +82,7 @@ class RemoteSnifferServer:
                     break
 
 
-        #format text to bold and red 
+        # format text to bold and red 
         def change_text_color(self, text):
             RESET = "\033[0m"
             BOLD = "\033[1m"
@@ -102,15 +102,15 @@ class RemoteSnifferServer:
                 if cmd == '':
                     pass
 
-                 #delete all document in the specified index
+                 # delete all document in the specified index
                 elif cmd == 'guide':
                     self.show_commands()
 
-                #display all clients within index
+                # display all clients within index
                 elif cmd.strip() == 'clients':
                     self.eshandler.retrieve_client_information()
 
-                #check if client connection is active
+                # check if client connection is active
                 elif cmd.strip() == 'connected':
                     if self.is_conn_active():
                         self.eshandler.retrieve_client_information()
@@ -128,7 +128,7 @@ class RemoteSnifferServer:
 
 
                 elif 'shell' in cmd:
-                    #check if connection is still active
+                    # check if connection is still active
                     if self.conn1:
                         try:
                             #self.conn.send("check call".encode())
@@ -142,7 +142,7 @@ class RemoteSnifferServer:
 
 
 
-        #sends null to the client and get the current working directory in return
+        # sends null to the client and get the current working directory in return
         def send_null(self):
             self.conn1.send(str(" ").encode())
             data = self.conn1.recv(1024).decode()
@@ -150,7 +150,7 @@ class RemoteSnifferServer:
 
 
 
-        #checks if connection is active
+        # checks if connection is active
         def is_conn_active(self):
             try:
                 self.conn1.send(str(" ").encode())
@@ -163,7 +163,7 @@ class RemoteSnifferServer:
 
 
 
-        #sends commands to the client
+        # sends commands to the client
         def handle_client_session(self):
                 self.send_null()
 
@@ -203,7 +203,7 @@ class RemoteSnifferServer:
                             break
 
 
-        #process and index capture from client machine
+        # process and index capture from client machine
         def handle_captures(self):
 
             while True:
@@ -227,7 +227,7 @@ class RemoteSnifferServer:
 
 
 
-        #handles packet by accumulating it until all expected data has been received
+        # handles packet by accumulating it until all expected data has been received
         def recvall(self, buffer_size=8192):
             data = bytearray()
 
@@ -241,7 +241,7 @@ class RemoteSnifferServer:
 
 
 
-        #displays caesar shell commands
+        # displays caesar shell commands
         def show_commands(self):
             user_guide = """
                 Remote Sniffer Commands

