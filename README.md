@@ -48,11 +48,29 @@ Remote Sniffer is a simple Python-based tool designed to remotely capture and an
 * Reverse Shell: Includes a reverse shell feature for starting or stopping the packet sniffer remotely.
 
 
-
 ## Installation
 Packet-Sniffer requires Python 3.x and certain dependencies. Use pip to install the required packages:
 
 `pip install -r requirements.txt`
+
+
+
+## Usage 
+```
+	 	 Remote Sniffer Commands
+             'guide':[Display Remote Sniffer user commands]
+             'clients':['displays clients within ES index']
+             'connected':['display all active connection within ES index']
+             'shell':['starts session between the server and the client machine']
+             'delete (ES ID)': ['remove specified document from index using ES ID']
+             'delete all': ['deletes all document from index']
+
+        Client Commands                                                
+            'quit':['quits the session and takes user back to Remote Sniffer interface']           
+            'start sniffer' ['start remote sniffer']
+            'stop sniffer': ['stops remote sniffer']  
+
+```
 
 
 
