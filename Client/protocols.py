@@ -1,9 +1,7 @@
 import socket
 import struct
 
- 
- # https://docs.python.org/3/library/struct.html for a better understanding of struct 
-# https://datatracker.ietf.org/doc/html/rfc791#page-11 learn more about internet protocol
+
 
 class Protocols:
 

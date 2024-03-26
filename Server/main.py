@@ -250,7 +250,7 @@ class RemoteSnifferServer:
                      'connected':['display all active connection within ES index']
                      'shell':['starts session between the server and the client machine']
                      'delete (ES ID)': ['remove specified document from index using ES ID']
-                     'delete all': ['deletes all document from index']
+                     'delete all': ['deletes all documents from ES index']
 
                 Client Commands                                                
                     'quit':['quits the session and takes user back to Remote Sniffer interface']           

@@ -2,27 +2,7 @@
 Remote Sniffer is a simple Python-based tool designed to remotely capture and analyze network packets. It allows users to monitor network traffic in real-time, capturing packets sent and received over a network interface.
 
 
-  ## Internet Header Format
-
-```
-
-    0                   1                   2                   3
-    0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
-   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-   |Version|  IHL  |Type of Service|          Total Length         |
-   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-   |         Identification        |Flags|      Fragment Offset    |
-   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-   |  Time to Live |    Protocol   |         Header Checksum       |
-   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-   |                       Source Address                          |
-   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-   |                    Destination Address                        |
-   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-   |                    Options                    |    Padding    |
-   +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-
-```
+<i class="fa-brands fa-python"></i>
 
 ## Setup Elasticsearch
 * Before using Packet-Sniffer, ensure that you have Elasticsearch installed and configured. Elasticsearch is used for storing and indexing captured packet data. Follow these steps to set up Elasticsearch:
@@ -49,6 +29,7 @@ Remote Sniffer is a simple Python-based tool designed to remotely capture and an
 
 
 ## Installation
+
 Remote Sniffer requires Python 3 and certain dependencies. Use pip to install the required packages:
 
 `pip install -r requirements.txt`
@@ -56,10 +37,9 @@ Remote Sniffer requires Python 3 and certain dependencies. Use pip to install th
 
 
 ## Usage 
+
 * Start the Server: Run the server program to start the interactive shell and send commands to the client.
-
 * Access the Client: Run the client program to connect to the server.
-
 * Monitor Network Traffic: View captured packets in real-time and perform analysis as needed.
 
 
@@ -71,7 +51,7 @@ Remote Sniffer requires Python 3 and certain dependencies. Use pip to install th
          'connected':['display all active connection within ES index']
          'shell':['starts session between the server and the client machine']
          'delete (ES ID)': ['remove specified document from index using ES ID']
-         'delete all': ['deletes all document from index']
+         'delete all': ['deletes all documents from ES index']
 
     Client Commands                                                
         'quit':['quits the session and takes user back to Remote Sniffer interface']           
@@ -85,6 +65,6 @@ Remote Sniffer requires Python 3 and certain dependencies. Use pip to install th
 ## Disclaimer
 
 This code is intended for educational and informational purposes only. Use it responsibly and ensure compliance with applicable laws and regulations. Respect the privacy and security of others.  
-The author of this code assume no liability and is not responsible for misuses or damages caused by any code contained in this repository in any event that, accidentally or otherwise, it comes to be utilized by a threat agent or unauthorized entity as a means to compromise the security, privacy, confidentiality, integrity, and/or availability of systems and their associated resources. In this context the term "compromise" is henceforth understood as the leverage of exploitation of known or unknown vulnerabilities present in said systems, including, but not limited to, the implementation of security controls, human- or electronically-enabled.
+The author of this code assume no liability and is not responsible for misuses or damages caused by any code contained in this repository in any event that, accidentally or otherwise, it comes to be utilized by a threat agent or unauthorized entity as a means to compromise the security, privacy, confidentiality, integrity, and/or availability of systems and their associated resources. In this context the term "compromise" is henceforth understood as the leverage of exploitation of known or unknown vulnerabilities present in said systems, including, but not limited to, the implementation of security controls, human or electronically-enabled.
 
 
