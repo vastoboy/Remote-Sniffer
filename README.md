@@ -1,8 +1,16 @@
 # Packet-Sniffer
 
-<img src="https://img.shields.io/badge/Python-FFD43B?style=for-the-badge&logo=python&logoColor=blue" alt="Python">
-<img src="https://img.shields.io/badge/Elastic_Search-005571?style=for-the-badge&logo=elasticsearch&logoColor=white" alt="Elasticsearch">
-<img src="https://img.shields.io/badge/Linux-FCC624?style=for-the-badge&logo=linux&logoColor=black" alt="Linux">
+<div style="display: inline-block; width: 33.33%;">
+    <img src="https://img.shields.io/badge/Python-FFD43B?style=for-the-badge&logo=python&logoColor=blue" alt="Python">
+</div>
+
+<div style="display: inline-block; width: 33.33%;">
+    <img src="https://img.shields.io/badge/Elastic_Search-005571?style=for-the-badge&logo=elasticsearch&logoColor=white" alt="Elasticsearch">
+</div>
+
+<div style="display: inline-block; width: 33.33%;">
+    <img src="https://img.shields.io/badge/Linux-FCC624?style=for-the-badge&logo=linux&logoColor=black" alt="Linux">
+</div>
 
 Remote Sniffer is a simple Python-based tool designed to remotely capture and analyze network packets. It allows users to monitor network traffic in real-time, capturing packets sent and received over a network interface.
 
