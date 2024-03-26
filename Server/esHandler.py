@@ -14,17 +14,29 @@ class EsHandler:
 
 
 
-        #store client info in elastic search
+        #store client info in elasticsearch index
         def store_client_information(self, client_info, document_id=0):
             try:
+
                 if self.es.exists(index=self.index_name, id=document_id):
-                    self.es.update(index=self.index_name, id=document_id, body={"doc": client_info})
-                    print("[+] Document Updated!!!")
+                    client_mac_address = client_info.get("mac_address")
+                    client_info_doc = self.es.get(index=self.index_name, id=document_id)
+
+                    if client_info_doc["_source"].get("mac_address") == client_mac_address:
+                        self.es.update(index=self.index_name, id=document_id, body={"doc": client_info})
+                        print("[+]Client document has been Updated!!!")
+                        return True
+                    else:
+                        print("[-]This index can only contain one client use the delete all command to clear index or use a different index!!!")
+                        return False 
+
                 else:
                     resp = self.es.index(index=self.index_name, id=document_id, body=client_info)
-                    print("information stored sucessfully")
+                    print("[+]Client information stored sucessfully!!!")
+                    return True
+
             except Exception as e:
-                print("[+]Unable to store data!!! \n")
+                print("[-]Unable to store data!!! \n")
                 print(e)
 
 
@@ -35,8 +47,8 @@ class EsHandler:
                 self.es.delete_by_query(index=self.index_name, body={"query": {"match_all": {}}})
                 print("[+]Documents deleted sucessfully!!!")
             except Exception as e:
+                print("[-]Unable delete documents")
                 print(e)
-                print("[+]Unable delete documents")
 
 
 
@@ -53,12 +65,13 @@ class EsHandler:
         #tabulate es date using prettytable
         def tabulate_index_data(self, resp):
             for hit in resp:
-                self.pt.field_names = ["Client-ID", "IP-Address", "System", "Node", "Release", "Version", "Machine", "Date-Joined", "Time-Joined"]
+                self.pt.field_names = ["Client-ID", "IP-Address", "System", "Node", "Mac-Address", "Release", "Version", "Machine", "Date-Joined", "Time-Joined"]
                 self.pt.add_row([
                              hit["_id"],
                              hit["_source"].get("ip"),
                              hit["_source"].get("system"),
                              hit["_source"].get("node"),
+                             hit["_source"].get("mac_address"),
                              hit["_source"].get("release"),
                              hit["_source"].get("version"),
                              hit["_source"].get("machine"),
@@ -71,6 +84,7 @@ class EsHandler:
 
 
 
+        #retrieves client infor from index
         def retrieve_client_information(self):
             query = {
                 "query": {
@@ -79,6 +93,7 @@ class EsHandler:
                             {"exists": {"field": "ip"}},
                             {"exists": {"field": "system"}},
                             {"exists": {"field": "node"}},
+                            {"exists": {"field": "mac_address"}},
                             {"exists": {"field": "release"}},
                             {"exists": {"field": "version"}},
                             {"exists": {"field": "machine"}},
@@ -95,26 +110,26 @@ class EsHandler:
                 if hits:
                     self.tabulate_index_data(hits)
                 else:
-                    print("No documents found with the specified fields.")
+                    print("[-]No documents found with the specified fields.")
             except Exception as e:
-                print(f"An error occurred: {e} \n")
+                print(f"[-]An error occurred: {e} \n")
 
 
 
-
+        #index caputure data 
         def index_capture(self, capture):
             try:
                 response = self.es.count(index=self.index_name)
                 num_documents = response['count']
-                print(f"Doc ID: {num_documents}")
+                #print(f"Doc ID: {num_documents}") 
                 document_id = num_documents + 1 
                 self.es.index(index=self.index_name, id=document_id, body=capture)
 
-                print(f"Capture data saved to Elasticsearch with document ID: {document_id}")
+                #print(f"[+]Capture data saved to Elasticsearch with document ID: {document_id}")
                 self.es.indices.refresh(index=self.index_name)
 
 
             except Exception as e:
-                print(f"Error occurred while saving capture to Elasticsearch: {e} \n")
+                print(f"[-]Error occurred while saving capture to Elasticsearch: {e} \n")
 
 

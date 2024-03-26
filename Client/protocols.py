@@ -11,7 +11,6 @@ class Protocols:
 		return ':'.join(f'{byte:02X}' for byte in mac_bytes)
 
 
-
 	def ipv4(self, raw_data):
 		version_header_length = raw_data[0]
 		version = version_header_length >> 4
@@ -28,7 +27,7 @@ class Protocols:
 	    return '.'.join(map(str, addr))
 
 
-
+	#parse raw tcp packet
 	def tcp(self, raw_data):
 		(src_port, dest_port, sequence, acknowledgment, offset_reserved_flags) = struct.unpack('! H H L L H', raw_data[:14])
 		offset = (offset_reserved_flags >> 12) * 4
@@ -41,14 +40,14 @@ class Protocols:
 		data = raw_data[offset:]
 		return src_port, dest_port, sequence, acknowledgment, offset, flag_urg, flag_ack, flag_psh, flag_rst, flag_syn, flag_fin, data
 
-
+	#parse raw udp packet
 	def udp(self, raw_data):
 		src_port, dest_port, size = struct.unpack('! H H 2x H', raw_data[:8])
 		data = raw_data[8:]
 		return src_port, dest_port, size, data
 
  
-
+	#parse raw Ethernet frame
 	def ethernet(self, raw_data):
 		dest, src, prototype = struct.unpack('! 6s 6s H', raw_data[:14])
 		dest_mac = self.get_mac_addr(dest)
@@ -58,7 +57,7 @@ class Protocols:
 		return dest_mac, src_mac, proto, data
 
 
-
+	#decode and retrun http packet
 	def http(self, raw_data):
 		try:
 			data = raw_data.decode('utf-8')
@@ -68,11 +67,9 @@ class Protocols:
 			return data
 
 
-
+	#parse raw icmp packet
 	def icmp(self, raw_data):
 		packet_type, code, checksum = struct.unpack('! B B H', raw_data[:4])
 		data = raw_data[4:]
 		return packet_type, code, checksum, data
-
-
 

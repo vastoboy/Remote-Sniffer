@@ -1,6 +1,6 @@
 #Created by Vasto Boy
 
-#Disclaimer: This packet sniffer should only be used in the lawful, remote administration of authorized systems. Accessing a computer network without authorization or permission is illegal.
+#Disclaimer: This remote packet sniffer should only be used in the lawful, remote administration of authorized systems. Accessing a computer network without authorization or permission is illegal.
 
 import os
 import re
@@ -16,7 +16,7 @@ from getmac import get_mac_address as gma
 
 
 
-class SimpleSnifferServer:
+class RemoteSnifferServer:
 
         def __init__(self, host, port1, port2, index_name, es_url):
             self.host = host
@@ -26,7 +26,6 @@ class SimpleSnifferServer:
             self.sock2 = None
             self.conn1 = None
             self.conn2 = None
-
             self.eshandler = EsHandler(index_name, es_url)
 
 
@@ -37,13 +36,13 @@ class SimpleSnifferServer:
                 self.sock1 = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
                 self.sock1.bind((self.host, self.port1))
                 self.sock1.listen(5) # Listen for connections on port 1
-                print(f"Listening on {self.port1}!!!")
+                print(f"Listening on port {self.port1}")
 
 
                 self.sock2 = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
                 self.sock2.bind((self.host, self.port2))
                 self.sock2.listen(5) # Listen for connections on port 2
-                print(f"Listening on {self.port2}!!!")
+                print(f"Listening on port {self.port2}")
 
             except socket.error as err:
                 print("[-]Error unable to create socket!!!" + str(err))
@@ -56,12 +55,12 @@ class SimpleSnifferServer:
                 try:
                     self.conn1, addr = self.sock1.accept()
                     self.conn1.setblocking(True)
-                    print("\n[+]Session 1 has started!!!")
+                    print(f"[+]Session 1 has started on port {self.port1}")
                     
 
                     self.conn2, addr = self.sock2.accept()
                     self.conn2.setblocking(True)
-                    print("[+]Session 2 has started!!!")
+                    print(f"[+]Session 2 has started on port {self.port2}")
                    
 
                     client_data = self.conn1.recv(1024).decode() #recieve response from client
@@ -71,14 +70,19 @@ class SimpleSnifferServer:
                     client_data = json.loads(client_data)
                     client_data_dict = ip.copy() #prepend ip to the start of the dictionary
                     client_data_dict.update(client_data)
-                    self.eshandler.store_client_information(client_data_dict)
+                    is_client_indexed = self.eshandler.store_client_information(client_data_dict)
 
-                        
+                    #disconnect if client was not indexed sucessfuly
+                    if not is_client_indexed:
+                        self.conn1.close()
+                        self.conn2.close()
+                        print("[+]Connection has been closed!!!")
+   
                 except KeyboardInterrupt:
                     break
 
 
-
+        #format text to bold and red 
         def change_text_color(self, text):
             RESET = "\033[0m"
             BOLD = "\033[1m"
@@ -98,22 +102,26 @@ class SimpleSnifferServer:
                 if cmd == '':
                     pass
 
+                 #delete all document in the specified index
+                elif cmd == 'guide':
+                    self.show_commands()
 
+                #display all clients within index
                 elif cmd.strip() == 'clients':
                     self.eshandler.retrieve_client_information()
 
-
+                #check if client connection is active
                 elif cmd.strip() == 'connected':
                     if self.is_conn_active():
                         self.eshandler.retrieve_client_information()
                     else:
                         print("[-]No active connections!!!")
 
-
-                elif 'delete all' in cmd:
+                #delete all document in the specified index
+                elif cmd == 'delete all':
                     self.eshandler.delete_all_docs()
 
-
+                #delete specified document
                 elif 'delete' in cmd:
                     client_id = cmd[7:]
                     self.eshandler.delete_document(client_id)
@@ -139,6 +147,7 @@ class SimpleSnifferServer:
             self.conn1.send(str(" ").encode())
             data = self.conn1.recv(1024).decode()
             print(str(data), end="")
+
 
 
         #checks if connection is active
@@ -194,7 +203,7 @@ class SimpleSnifferServer:
                             break
 
 
-        
+        #process and index capture from client machine
         def handle_captures(self):
 
             while True:
@@ -207,17 +216,18 @@ class SimpleSnifferServer:
                         captures = json.loads(captures_jsons, parse_int=str)
 
                         for capture in captures:
-                            print(capture)
-                            print("\n")
+                            #print(capture)
+                            #print("\n")
                             self.eshandler.index_capture(capture)
                     else:
                         continue
                 except Exception as e:
-                    print(f"Error occurred while receiving captures: {e}")
+                    print(f"[-]Error occurred while receiving captures: {e}")
                     continue
 
 
 
+        #handles packet by accumulating it until all expected data has been received
         def recvall(self, buffer_size=8192):
             data = bytearray()
 
@@ -231,6 +241,26 @@ class SimpleSnifferServer:
 
 
 
+        #displays caesar shell commands
+        def show_commands(self):
+            user_guide = """
+                Remote Sniffer Commands
+                     'guide':[Display Remote Sniffer user commands]
+                     'clients':['displays clients within ES index']
+                     'connected':['display all active connection within ES index']
+                     'shell':['starts session between the server and the client machine']
+                     'delete (ES ID)': ['remove specified document from index using ES ID']
+                     'delete all': ['deletes all document from index']
+
+                Client Commands                                                
+                    'quit':['quits the session and takes user back to Remote Sniffer interface']           
+                    'start sniffer' ['start remote sniffer']
+                    'stop sniffer': ['stops remote sniffer']      
+                """
+            print(user_guide)
+
+
+
         def start(self):
             self.create_socket()
             self.handle_client()
@@ -240,12 +270,12 @@ class SimpleSnifferServer:
 
 
 art = """
-███████╗██╗███╗   ███╗██████╗ ██╗     ███████╗    ███████╗███╗   ██╗██╗███████╗███████╗███████╗██████╗ 
-██╔════╝██║████╗ ████║██╔══██╗██║     ██╔════╝    ██╔════╝████╗  ██║██║██╔════╝██╔════╝██╔════╝██╔══██╗
-███████╗██║██╔████╔██║██████╔╝██║     █████╗      ███████╗██╔██╗ ██║██║█████╗  █████╗  █████╗  ██████╔╝
-╚════██║██║██║╚██╔╝██║██╔═══╝ ██║     ██╔══╝      ╚════██║██║╚██╗██║██║██╔══╝  ██╔══╝  ██╔══╝  ██╔══██╗
-███████║██║██║ ╚═╝ ██║██║     ███████╗███████╗    ███████║██║ ╚████║██║██║     ██║     ███████╗██║  ██║
-╚══════╝╚═╝╚═╝     ╚═╝╚═╝     ╚══════╝╚══════╝    ╚══════╝╚═╝  ╚═══╝╚═╝╚═╝     ╚═╝     ╚══════╝╚═╝  ╚═╝
+██████╗ ███████╗███╗   ███╗ ██████╗ ████████╗███████╗    ███████╗███╗   ██╗██╗███████╗███████╗███████╗██████╗ 
+██╔══██╗██╔════╝████╗ ████║██╔═══██╗╚══██╔══╝██╔════╝    ██╔════╝████╗  ██║██║██╔════╝██╔════╝██╔════╝██╔══██╗
+██████╔╝█████╗  ██╔████╔██║██║   ██║   ██║   █████╗      ███████╗██╔██╗ ██║██║█████╗  █████╗  █████╗  ██████╔╝
+██╔══██╗██╔══╝  ██║╚██╔╝██║██║   ██║   ██║   ██╔══╝      ╚════██║██║╚██╗██║██║██╔══╝  ██╔══╝  ██╔══╝  ██╔══██╗
+██║  ██║███████╗██║ ╚═╝ ██║╚██████╔╝   ██║   ███████╗    ███████║██║ ╚████║██║██║     ██║     ███████╗██║  ██║
+╚═╝  ╚═╝╚══════╝╚═╝     ╚═╝ ╚═════╝    ╚═╝   ╚══════╝    ╚══════╝╚═╝  ╚═══╝╚═╝╚═╝     ╚═╝     ╚══════╝╚═╝  ╚═╝
 """ 
 
 print(art)
@@ -253,7 +283,8 @@ print(art)
 
 
 
-sniffer = SimpleSnifferServer("192.168.1.202", 5001, 5002, "sniffer", "http://localhost:9200")
+sniffer = RemoteSnifferServer("192.168.1.206", 5001, 5002, "sniffer", "http://localhost:9200")
+sniffer.show_commands()
 
 # Create two threads for the functions
 thread1 = threading.Thread(target=sniffer.start)
@@ -262,8 +293,5 @@ thread2 = threading.Thread(target=sniffer.shell_interface)
 # Start threads
 thread1.start()
 thread2.start() 
-
-
-
 
 
