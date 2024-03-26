@@ -17,7 +17,6 @@ class EsHandler:
         #store client info in elastic search
         def store_client_information(self, client_info, document_id=0):
             try:
-                print(client_info)
                 if self.es.exists(index=self.index_name, id=document_id):
                     self.es.update(index=self.index_name, id=document_id, body={"doc": client_info})
                     print("[+] Document Updated!!!")
@@ -25,7 +24,7 @@ class EsHandler:
                     resp = self.es.index(index=self.index_name, id=document_id, body=client_info)
                     print("information stored sucessfully")
             except Exception as e:
-                print("[+]Unable to store data!!!")
+                print("[+]Unable to store data!!! \n")
                 print(e)
 
 
@@ -98,7 +97,7 @@ class EsHandler:
                 else:
                     print("No documents found with the specified fields.")
             except Exception as e:
-                print(f"An error occurred: {e}")
+                print(f"An error occurred: {e} \n")
 
 
 
@@ -116,6 +115,6 @@ class EsHandler:
 
 
             except Exception as e:
-                print(f"Error occurred while saving capture to Elasticsearch: {e}")
+                print(f"Error occurred while saving capture to Elasticsearch: {e} \n")
 
 

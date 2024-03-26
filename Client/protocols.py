@@ -7,10 +7,9 @@ class Protocols:
 
 	
 	# Returns MAC as string from bytes (ie AA:BB:CC:DD:EE:FF)
-	def get_mac_addr(self, mac_raw):
-	    byte_str = map('{:02x}'.format, mac_raw)
-	    mac_addr = ':'.join(byte_str).upper()
-	    return mac_addr
+	def get_mac_addr(self, mac_bytes):
+		return ':'.join(f'{byte:02X}' for byte in mac_bytes)
+
 
 
 	def ipv4(self, raw_data):

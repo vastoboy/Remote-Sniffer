@@ -1,2 +1,2 @@
 # Packet-Sniffer
-Simple Python Packet Sniffer
+Simple Python Remote Packet Sniffer
