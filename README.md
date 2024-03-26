@@ -57,7 +57,8 @@ Remote Sniffer requires Python 3 and certain dependencies. Use pip to install th
 
 ## Usage 
 ```
- 	Remote Sniffer Commands
+
+    Remote Sniffer Commands
          'guide':[Display Remote Sniffer user commands]
          'clients':['displays clients within ES index']
          'connected':['display all active connection within ES index']
@@ -76,7 +77,7 @@ Remote Sniffer requires Python 3 and certain dependencies. Use pip to install th
 
 ## Disclaimer
 
-This code is intended for educational and informational purposes only. Use it responsibly and ensure compliance with applicable laws and regulations. Respect the privacy and security of others.
+This code is intended for educational and informational purposes only. Use it responsibly and ensure compliance with applicable laws and regulations. Respect the privacy and security of others.  
 The author of this code assume no liability and is not responsible for misuses or damages caused by any code contained in this repository in any event that, accidentally or otherwise, it comes to be utilized by a threat agent or unauthorized entity as a means to compromise the security, privacy, confidentiality, integrity, and/or availability of systems and their associated resources. In this context the term "compromise" is henceforth understood as the leverage of exploitation of known or unknown vulnerabilities present in said systems, including, but not limited to, the implementation of security controls, human- or electronically-enabled.
 
 
