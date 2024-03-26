@@ -56,6 +56,13 @@ Remote Sniffer requires Python 3 and certain dependencies. Use pip to install th
 
 
 ## Usage 
+* Start the Server: Run the server program to start the interactive shell and send commands to the client.
+
+* Access the Client: Run the client program to connect to the server.
+
+* Monitor Network Traffic: View captured packets in real-time and perform analysis as needed.
+
+
 ```
 
     Remote Sniffer Commands
