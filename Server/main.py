@@ -282,7 +282,7 @@ print(art)
 
 
 
-sniffer = RemoteSnifferServer("192.168.1.206", 5001, 5002, "sniffer", "http://localhost:9200")
+sniffer = RemoteSnifferServer("IP-ADDRESS", "PORT-1", "PORT-2", "ES-INDEX", "http://localhost:9200")
 sniffer.show_commands()
 
 # Create two threads for the functions
