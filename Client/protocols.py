@@ -11,6 +11,7 @@ class Protocols:
 		return ':'.join(f'{byte:02X}' for byte in mac_bytes)
 
 
+	# parse ipv4 packet
 	def ipv4(self, raw_data):
 		version_header_length = raw_data[0]
 		version = version_header_length >> 4
@@ -29,13 +30,14 @@ class Protocols:
 
 	# parse raw tcp packet
 	def tcp(self, raw_data):
+		# Unpack the first 14 bytes of the TCP segment 
 		(src_port, dest_port, sequence, acknowledgment, offset_reserved_flags) = struct.unpack('! H H L L H', raw_data[:14])
 
 		# Extract individual TCP flags
-
-		# Calculate the offset to determine the start of TCP payload
-		# Bit shift offset_reserved_flags by 12. The value is a 32-bit words 
-		# Multiply by 4 to represent length in bytes
+	    # The TCP header length (data offset) is the first part of the 16-bit field 'offset_reserved_flags'.
+	    # It represents the size of the TCP header in 32-bit words. To get the length in bytes:
+	    # Bit shift 'offset_reserved_flags' right by 12 bits to isolate the data offset value.
+	    # Multiply the result by 4 (since each 32-bit word is 4 bytes) to convert the length from words to bytes.
 		offset = (offset_reserved_flags >> 12) * 4
 
 		# AND offset_reserved_flags by 32 (0000000000100000) and bit shift the result 5 bits (0000000000000001) if the AND operation is 0 it will look like this 0000000000000000 signifying the flag isn't present
@@ -44,7 +46,7 @@ class Protocols:
 		flag_psh = (offset_reserved_flags & 8) >> 3
 		flag_rst = (offset_reserved_flags & 4) >> 2
 		flag_syn = (offset_reserved_flags & 2) >> 1
-		flag_fin = offset_reserved_flags & 1  # No need to shift here as this is the least significant bit
+		flag_fin = offset_reserved_flags & 1  # No need to shift here because this is the least significant bit
 		data = raw_data[offset:]
 		return src_port, dest_port, sequence, acknowledgment, offset, flag_urg, flag_ack, flag_psh, flag_rst, flag_syn, flag_fin, data
 

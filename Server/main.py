@@ -82,8 +82,8 @@ class RemoteSnifferServer:
                     break
 
 
-        # format text to bold and red 
-        def change_text_color(self, text):
+        # format text to bold and blue 
+        def convert_text_bold_blue(self, text):
             RESET = "\033[0m"
             BOLD = "\033[1m"
             COLOR = "\u001b[36m" 
@@ -95,7 +95,7 @@ class RemoteSnifferServer:
         def shell_interface(self):
 
             while True:
-                print(self.change_text_color("Sniffer: "), end="")
+                print(self.convert_text_bold_blue("Sniffer: "), end="")
                 cmd = input()
                 cmd = cmd.rstrip()
 

