@@ -1,6 +1,6 @@
-#Created by Vasto Boy
+# Created by Vasto Boy
 
-#Disclaimer: This remote packet sniffer should only be used in the lawful, remote administration of authorized systems. Accessing a computer network without authorization or permission is illegal.
+# Disclaimer: This remote packet sniffer should only be used in the lawful, remote administration of authorized systems. Accessing a computer network without authorization or permission is illegal.
 
 import os
 import re
@@ -117,11 +117,11 @@ class RemoteSnifferServer:
                     else:
                         print("[-]No active connections!!!")
 
-                #delete all document in the specified index
+                # delete all document in the specified index
                 elif cmd == 'delete all':
                     self.eshandler.delete_all_docs()
 
-                #delete specified document
+                # delete specified document
                 elif 'delete' in cmd:
                     client_id = cmd[7:]
                     self.eshandler.delete_document(client_id)
@@ -131,7 +131,7 @@ class RemoteSnifferServer:
                     # check if connection is still active
                     if self.conn1:
                         try:
-                            #self.conn.send("check call".encode())
+                            # self.conn.send("check call".encode())
                             self.handle_client_session()
                         except Exception as e:
 
