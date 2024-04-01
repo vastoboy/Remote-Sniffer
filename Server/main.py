@@ -49,7 +49,7 @@ class RemoteSnifferServer:
 
 
 
-        #handles incoming connection
+        # handles incoming connection
         def handle_client(self):
             while True:
                 try:
@@ -68,7 +68,7 @@ class RemoteSnifferServer:
                     ip = {"ip": "".join(ip)}
                     
                     client_data = json.loads(client_data)
-                    client_data_dict = ip.copy() #prepend ip to the start of the dictionary
+                    client_data_dict = ip.copy() # prepend ip to the start of the dictionary
                     client_data_dict.update(client_data)
                     is_client_indexed = self.eshandler.store_client_information(client_data_dict)
 
@@ -91,7 +91,7 @@ class RemoteSnifferServer:
 
 
 
-         #shell interface
+         # shell interface
         def shell_interface(self):
 
             while True:
@@ -241,7 +241,7 @@ class RemoteSnifferServer:
 
 
 
-        # displays caesar shell commands
+        # displays remote sniffer shell commands
         def show_commands(self):
             user_guide = """
                 Remote Sniffer Commands
