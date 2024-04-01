@@ -20,17 +20,17 @@ class RemoteSniffer:
         self._stop_thread = threading.Event()
 
 
-    #stop sniffer thread
+    # stop sniffer thread
     def stop_thread(self):
         self._stop_thread.set()
 
 
-    #reset event
+    # reset event
     def resume(self):
         self._stop_thread.clear()
 
 
-    #queue packets before sending it back to server
+    # queue packets before sending it back to server
     def process_captures(self, sock):
             while not self._stop_thread.is_set():
                 try:
@@ -48,7 +48,7 @@ class RemoteSniffer:
                         sock.sendall(captures_bytes)
                         self.capture_queue.task_done() # Ensure items are removed from the queue after processing
 
-                except BrokenPipeError as e: #stop sending if connection is no longer active
+                except BrokenPipeError as e: # stop sending if connection is no longer active
                     print(f"Broken pipe error occurred: {e}")
                     break
 

@@ -40,11 +40,11 @@ class RemoteSnifferClient:
         while True:
             try:
                 self.sock1 = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-                self.sock1.connect((self.host, self.port1)) #connect back to server
+                self.sock1.connect((self.host, self.port1)) # connect back to server on port 1
                 print(f"[+]Session 1 has started on port {self.port1}")
 
                 self.sock2 = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-                self.sock2.connect((self.host, self.port2)) #connect back to server
+                self.sock2.connect((self.host, self.port2)) # connect back to server port 2
                 print(f"[+]Session 2 has started on port {self.port2}")
                 break
 
