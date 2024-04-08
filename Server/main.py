@@ -26,13 +26,16 @@ class RemoteSnifferServer:
             self.sock2 = None
             self.conn1 = None
             self.conn2 = None
+            self._stop_thread = threading.Event()
             self.eshandler = EsHandler(index_name, es_url)
+
 
 
 
         # create socket and listen for client connections
         def create_socket(self):
             try:
+
                 self.sock1 = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
                 self.sock1.bind((self.host, self.port1))
                 self.sock1.listen(5) # Listen for connections on port 1
@@ -189,9 +192,12 @@ class RemoteSnifferServer:
                         sniffer_thread.start()
 
                     elif cmd == "stop sniffer":
+                        self._stop_thread.set()# stop sniffer thread
                         self.conn1.send(str(cmd).encode())
                         data = self.conn1.recv(65536).decode()
                         print(str(data), end="")
+                        self._stop_thread.clear() # reset event
+
 
                     else:
                         try:
@@ -206,7 +212,7 @@ class RemoteSnifferServer:
         # process and index capture from client machine
         def handle_captures(self):
 
-            while True:
+            while not self._stop_thread.is_set():
                 try:
                     # Receive captures from client machine
                     capture_bytes = self.recvall()
@@ -222,7 +228,7 @@ class RemoteSnifferServer:
                     else:
                         continue
                 except Exception as e:
-                    print(f"[-]Error occurred while receiving captures: {e}")
+                    #print(f"[-]Error occurred while receiving captures: {e}")
                     continue
 
 
@@ -282,7 +288,7 @@ print(art)
 
 
 
-sniffer = RemoteSnifferServer("IP-ADDRESS", "PORT-1", "PORT-2", "ES-INDEX", "http://localhost:9200")
+sniffer = RemoteSnifferServer("IP-ADDRESS", "PORT-1", "PORT-2", "sniffer", "http://localhost:9200")
 sniffer.show_commands()
 
 # Create two threads for the functions

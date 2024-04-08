@@ -169,6 +169,6 @@ class RemoteSnifferClient:
 
 
 
-sniffer = RemoteSnifferClient("IP-ADRESS", "PORT-1", "PORT-2")
+sniffer = RemoteSnifferClient("IP-ADDRESS", "PORT-1", "PORT-2")
 sniffer.start()
 

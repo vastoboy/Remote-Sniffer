@@ -39,6 +39,19 @@ Remote Sniffer requires Python 3 and certain dependencies. Use pip to install th
 
 ## Usage 
 
+After installing the dependencies, you can run the server by navigating to the server folder executing the following command:
+
+```
+ python3 main.py
+```
+
+Running the client with administrator privileges is necessary to capture network packets.To run the client, navigate to the client folder and execute the following command on the target machine:
+
+```
+ sudo python3 main.py
+```
+
+
 * Start the Server: Run the server program to start the interactive shell and send commands to the client.
 * Access the Client: Run the client program to connect to the server.
 * Monitor Network Traffic: View captured packets in real-time and perform analysis as needed.
@@ -61,6 +74,13 @@ Remote Sniffer requires Python 3 and certain dependencies. Use pip to install th
 
 ```
 
+
+
+Use the curl command in your terminal or command prompt to send HTTP requests to the Elasticsearch API. Here's a basic example of how to retrieve data:
+
+```
+curl -X GET "http://localhost:9200/{index_name}/_search"
+```
 
 
 ## Disclaimer
