@@ -33,19 +33,19 @@ Remote Sniffer is a simple Python-based tool designed to remotely capture and an
 
 Remote Sniffer requires Python 3 and certain dependencies. Use pip to install the required packages:
 
-`pip install -r requirements.txt`
+```pip install -r requirements.txt```
 
 
 
 ## Usage 
 
-After installing the dependencies, you can run the server by navigating to the server folder executing the following command:
+After installing the dependencies, you can run the server by navigating to the Server folder executing the following command:
 
 ```
  python3 main.py
 ```
 
-Running the client with administrator privileges is necessary to capture network packets.To run the client, navigate to the client folder and execute the following command on the target machine:
+Running the client with administrator privileges is necessary to capture network packets. To run the Client, navigate to the client folder and execute the following command on the target machine:
 
 ```
  sudo python3 main.py
@@ -76,7 +76,7 @@ Running the client with administrator privileges is necessary to capture network
 
 
 
-Use the curl command in your terminal or command prompt to send HTTP requests to the Elasticsearch API. Here's a basic example of how to retrieve data:
+Use the curl command in your terminal or command prompt to send HTTP requests to the Elasticsearch Index to retrieve amd examine packets captured. Here's a basic example of how to retrieve data:
 
 ```
 curl -X GET "http://localhost:9200/{index_name}/_search"
