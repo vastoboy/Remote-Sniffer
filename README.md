@@ -77,7 +77,7 @@ Running the client with administrator privileges is necessary to capture network
 
 
 
-Use the curl command in your terminal or command prompt to send HTTP requests to the Elasticsearch Index to retrieve amd examine captured packets. Here's a basic example of how to retrieve data:
+Use the curl command in your terminal or command prompt to send HTTP requests to the Elasticsearch Index to retrieve amd examine captured packets. Here's a basic example of how to retrieve that data:
 
 ```
 curl -X GET "http://localhost:9200/{index_name}/_search"
