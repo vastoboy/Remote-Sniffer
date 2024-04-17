@@ -6,7 +6,7 @@ Remote Sniffer is a simple Python-based tool designed to remotely capture and an
 
 
 ## Setup Elasticsearch
-* Before using Packet-Sniffer, ensure that you have Elasticsearch installed and configured. Elasticsearch is used for storing and indexing captured packet data. Follow these steps to set up Elasticsearch:
+Before using Packet-Sniffer, ensure that you have Elasticsearch installed and configured. Elasticsearch is used for storing and indexing captured packet data. Follow these steps to set up Elasticsearch:
 
 * Install Elasticsearch: Download and install Elasticsearch from the official Elasticsearch website.
 
